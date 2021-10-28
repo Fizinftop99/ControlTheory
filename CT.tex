@@ -1,0 +1,65 @@
+\documentclass{article}
+\usepackage[english, russian]{babel}
+
+\usepackage[smalleter,top=0.1cm,bottom=2cm,left=3cm,right=3cm,marginparwidth=1.75cm]{geometry}
+
+% Useful packages
+\usepackage[14pt]{extsizes}
+\usepackage{amsmath}
+\usepackage{graphicx}
+\usepackage[colorlinks=true, allcolors=blue]{hyperref}
+\title{Линейный квадратичный регулятор}
+\author{Конспект выполнили Наумов Никита, Веденеева Элина Б03-831}
+
+\begin{document}
+\maketitle
+
+\section{Линейно-квадратичный регулятор}
+\[ \dot{x} = Ax + Bu \hspace{20mm} x(0) = x^0 \]
+Целевой функционал $J = \int\limits_0^{\infty} (x^TQx + u^TRu)dt \to min$
+\\ Если система нелинейная, линеаризуем $\dot{x} = f(x, u, t)$
+\[ f(x,u) = f(x^0, u^0) + \left\frac{\partial f}{\partial x}\right|_{x=x^0}(x-x^0) + \left\frac{\partial f}{\partial u}\right|_{u=u^0}(u-u^0) + ... \]
+\[ A(x) = \left\frac{\partial f}{\partial x}\right|_{x=x^0} \hspace{20mm} B(x) = \left\frac{\partial f}{\partial u}\right|_{u=u^0}(u-u^0)\]
+\\ Решив алгебраическое уравнение Риккати с A(x(t)) и B(x(t)), найдем
+\[ u = -kx \]
+
+
+
+\newpage
+\section{State-Dependent Riccati Equation (SDRE)}
+\[ x_{t+1} = Ax_t + Bu_t \hspace{20mm} 
+J = \sum\limits_{\tau=0}^{N-1} (x_\tau^TQx_\tau + u_\tau^TQu_\tau) + x_N^TQ_fx_N \]
+\\ $x_0$ - дано, \\$u_0, u_1, u_2,.. u_{N-1}$ - N управлений, 
+\\ N - горизонт (число шагов)
+\\ $Q, R, Q_f$ - положительно определенные матрицы.
+
+
+
+\section{Динамическое программирование \\Уравнение Беллмана}
+\\ V - опорная функция (value-function)
+\[ V(z) = \min_{u_t, u_{t+1},.. u_{t+N-1}}\sum\limits_{\tau=t}^{t+N-1} 
+(x_\tau^TQx_\tau + u_\tau^TQu_\tau) + x_{t+N}^TQ_fx_{t+N} \]
+\begin{equation*}
+ \begin{cases}
+   x_t = z
+   \\
+   x_{\tau+1} = Ax_\tau + Bu_\tau
+   \\
+   \tau = t, t+1,.. ,t+N
+ \end{cases}
+\end{equation*}
+\\ На последнем шаге $V(z) = x_{t+N}^TQ_fx_{t+N}$
+\\ Зная $V_{\tau+1}(z)$ можно найти $V_{\tau}(z)$:
+\[ V_\tau(z) = \min(x_\tau^TQx_\tau + u_\tau^TQu_\tau) + x_{t+N}^TQ_fx_{t+N} \Rightarrow u_\tau \Rightarrow V_\tau \]
+
+
+\section{iLQR - итерационный линейно-квадратичный регулятор}
+\[\dot{x} = f(x, u) \hspace{20mm} J = \int\limits_0^T (x^TQx + u^TRu)dt \to 0\]
+\begin{enumerate} 
+  \item Линеаризация f:
+        $f(x,u) = f(x^0,u^0) + \frac{\partial f(x)}{\partial x}(x-x^0) + ...$
+  \item Выбрать управление
+  \item На обратном проходе от N к $\tau = T$ строим оптимальное управление $u^*$
+  \item Повторяем шаги 2 и 3 до сходимости траектории к X
+\end{enumerate}
+\end{document}
